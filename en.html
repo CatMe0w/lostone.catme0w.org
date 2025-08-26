@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Lost One's Chiral: Automatically solve the "chiral carbon CAPTCHA"</title>
+    <meta
+      name="description"
+      content='An automatic solver for the "chiral carbon CAPTCHA" and a piece of conceptual art critiquing absurd gatekeeping mechanisms.'
+    />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="alternate" hreflang="zh" href="https://lostone.catme0w.org/index.html" />
+    <link rel="alternate" hreflang="en" href="https://lostone.catme0w.org/en.html" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        "name": "Lost One's Chiral",
+        "about": "An automatic solver for the \"chiral carbon CAPTCHA\" and a piece of conceptual art critiquing absurd gatekeeping mechanisms.",
+        "keywords": ["MolScribe", "NeoAuthBot", "chiral carbon captcha"],
+        "inLanguage": "en"
+      }
+    </script>
+    <style>
+      :root {
+        --max-w: 1200px;
+
+        --bg: #f5f6f8;
+        --text: #0e1116;
+        --muted: #5c6675;
+        --card: #ffffff;
+        --accent: #2b7fff;
+        --shadow: rgba(10, 15, 20, 0.08);
+        --outline: rgba(10, 15, 20, 0.08);
+
+        --radius-lg: 16px;
+        --radius-md: 12px;
+        --radius-sm: 4px;
+
+        --section-gap: clamp(24px, 4vw, 60px);
+        --container-pad: 16px;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0b0e12;
+          --text: #ecf0f3;
+          --muted: #a8b0bd;
+          --card: #11161c;
+          --accent: #7fb3ff;
+          --shadow: rgba(0, 0, 0, 0.08);
+          --outline: rgba(127, 127, 127, 0.1);
+        }
+      }
+
+      html,
+      body {
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        margin: 0;
+        font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+          "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+        line-height: 1.6;
+        text-rendering: optimizeLegibility;
+        text-autospace: normal;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .container {
+        max-width: var(--max-w);
+        margin-inline: auto;
+        padding-inline: var(--container-pad);
+      }
+
+      .hero {
+        min-height: 100svh;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        position: relative;
+      }
+      .hero img {
+        margin: 0 0 8px;
+        max-width: 280px;
+      }
+      .hero h1 {
+        margin: 0 0 8px;
+        font-size: clamp(28px, 6vw, 56px);
+        letter-spacing: 0.2px;
+      }
+      .hero .subtitle {
+        margin: 0 0 8px;
+        font-size: clamp(16px, 2.5vw, 22px);
+        color: var(--muted);
+      }
+      .lang-switch {
+        margin-top: 8px;
+        font-size: 14px;
+      }
+      .scroll-cue {
+        position: absolute;
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%);
+        font-size: 13px;
+        color: var(--muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        user-select: none;
+      }
+
+      .divider {
+        border: 0;
+        border-top: 2px solid var(--outline);
+        margin: 0;
+      }
+
+      .app-section {
+        padding-block: var(--section-gap);
+      }
+      .app-head {
+        text-align: center;
+        margin-bottom: 16px;
+      }
+      .app-title {
+        margin: 0;
+        font-size: clamp(20px, 4vw, 28px);
+        letter-spacing: 0.2px;
+      }
+      .app-subtitle {
+        margin-top: 6px;
+        font-size: 14px;
+      }
+      .app-shell {
+        border-radius: var(--radius-sm);
+        box-shadow: 0 0 0 0 var(--shadow), 0 10px 30px -14px var(--shadow);
+        background: var(--card);
+      }
+
+      gradio-app {
+        display: block;
+        width: 100%;
+        min-height: 300px;
+      }
+
+      .faq-section {
+        padding-block: var(--section-gap);
+      }
+      .faq-wrap {
+        max-width: 960px;
+        margin: 0 auto;
+        background: var(--card);
+        border-radius: var(--radius-lg);
+        padding: clamp(20px, 5vw, 28px);
+        box-shadow: 0 0 0 0 var(--shadow), 0 10px 30px -14px var(--shadow);
+      }
+      .faq-title {
+        margin: 0 0 16px;
+        font-size: clamp(18px, 3.5vw, 24px);
+      }
+      .faq dl {
+        margin: 0;
+      }
+      .faq dt {
+        font-weight: 600;
+        font-size: larger;
+        margin-top: 24px;
+      }
+      .faq dd {
+        margin: 6px 0 36px 0;
+        color: var(--text);
+      }
+
+      footer {
+        padding-block: 36px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      footer .container {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        align-items: center;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="container">
+        <img src="./data-original.png" alt="(An example of this CAPTCHA type; often impossible for humans to solve.)" />
+        <h1>Lost One's Chiral</h1>
+        <p class="subtitle">Automatically solves "chiral carbon CAPTCHA"</p>
+        <div class="lang-switch">
+          <a href="./index.html">中文版本</a>
+        </div>
+      </div>
+      <div class="scroll-cue">
+        <span>Scroll down to start</span>
+      </div>
+    </header>
+
+    <hr class="divider" />
+
+    <section class="app-section" id="app">
+      <div class="container">
+        <div class="app-head">
+          <h2 class="app-title">Get started</h2>
+          <div class="app-subtitle">
+            <a href="https://catme0w-molscribe-long.hf.space" target="_blank" rel="noopener">Open in a new tab</a>
+          </div>
+        </div>
+
+        <div class="app-shell">
+          <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/5.42.0/gradio.js"></script>
+          <gradio-app src="https://catme0w-molscribe-long.hf.space"></gradio-app>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-section" id="faq">
+      <div class="container">
+        <div class="faq-wrap faq">
+          <h2 class="faq-title">FAQ</h2>
+          <dl>
+            <dt>What is this project?</dt>
+            <dd>
+              <p>
+                This project analyzes and responds to the "chiral carbon CAPTCHA" used by some Telegram groups as a join verification: newcomers are shown a
+                molecular diagram and asked to identify the chiral (asymmetric) carbons.
+              </p>
+              <p>
+                We believe this mechanism is unfair and inefficient, so we've built this demo to show how it can be automated, to help those without chemistry
+                training pass, and to suggest better alternatives.
+              </p>
+            </dd>
+
+            <dt>Why is it "unfair"?</dt>
+            <dd>
+              <p>Because it doesn't reliably separate humans from bots; it separates people with a chemistry background from everyone else.</p>
+              <p>
+                Even those with chemistry training need minutes to identify the answer. For machines, however, the problems come from a single source and follow
+                stable patterns—perfect for automation. The ones hurt most are cross-disciplinary newcomers and people without a STEM background, not spam bots.
+                In other words, it's a knowledge gate, not an effective anti-bot mechanism.
+              </p>
+              <p>
+                If the question were Oracle bone script, sheet music, or an obscure dialect, most people would immediately sense the unfairness.
+                <strong
+                  >The chemistry topic only feels okay because it happens to align with
+                  <a href="https://en.wikipedia.org/wiki/Gaokao" target="_blank" rel="noreferrer noopener">certain people's schooling</a>.</strong
+                >
+              </p>
+            </dd>
+
+            <dt>But doesn't it improve the quality of the group?</dt>
+            <dd>
+              <p>
+                No. That's misleading. It may leave you with a "quieter group that knows chemistry," but at the cost of blocking newcomers who could have
+                contributed but lack that background.
+              </p>
+              <p>
+                In short, it filters out real users rather than bots. The atmosphere "improves" simply because those who remain are more alike, forming an echo
+                chamber.
+              </p>
+              <p>
+                If a mechanism ends up discouraging disadvantaged groups, cross-disciplinary newcomers, or people with accessibility challenges—and you then
+                call the result "quality"—that isn't an improvement, it's a false sense of calm.
+              </p>
+            </dd>
+
+            <dt>Why not just ask people to learn chiral carbons first?</dt>
+            <dd>
+              <p>
+                Because a join check shouldn't be an exam. Even if someone is willing to learn on the spot, they must look things up, understand the concept,
+                and then identify it—wasting minutes on a meaningless hurdle. Verification shouldn't be "cram school." Learning should be voluntary exploration,
+                not a forced prerequisite; otherwise interest turns into burden—<a
+                  href="https://en.wikipedia.org/wiki/Mental_health_of_Chinese_students"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  >you probably know the feeling.</a
+                >
+              </p>
+              <p>
+                More importantly, not knowing chiral carbons doesn't mean you can't contribute. Binding a knowledge point to speaking rights is flawed by
+                design. If you want to encourage learning, make it an optional activity in the group instead.
+              </p>
+            </dd>
+
+            <dt>I find chiral carbons interesting. Isn't this a fun verification?</dt>
+            <dd>
+              <p>
+                Interest is great, but it shouldn't be the gate. Liking chemistry is fine; making a specific concept the ticket in shuts out people from other
+                backgrounds. As noted above, once it's mandatory, the positive experience of learning gets replaced by the pressure to "pass," pushing newcomers
+                away.
+              </p>
+              <p>
+                The goal of join verification is to prevent abuse, not to stage a mock exam. If you want to keep the "fun," make it an optional activity so more
+                people can enjoy it.
+              </p>
+            </dd>
+
+            <dt>At least it stops bots, right?</dt>
+            <dd>
+              <p>In practice, its effect is very limited.</p>
+              <p>
+                The problems come from concentrated sources with stable rules, so programs can recognize them at scale. Rendering issues (see below) and
+                accessibility problems mainly increase the human cost, not the machine's difficulty. More importantly, there's no data—pass rate, average time,
+                false-positive rate—showing a real benefit. The impression that "it stopped attacks" is likely because attackers pick cheaper targets first,
+                which says nothing about this method's inherent security.
+              </p>
+            </dd>
+
+            <dt>If the code is closed-source and the image is noised, would it be secure then?</dt>
+            <dd>
+              <p>
+                No. Security shouldn't rely on "others can't see the details." Using chiral-carbon molecules as prompts can't match the diversity of traffic
+                lights or fire hydrants; you can even brute-force the combinations. Obfuscation aimed at "raising machine difficulty" first raises human cost:
+                images become harder to see, and average completion time rises. Push the noise and distortion further, and you've reinvented a traditional
+                picture CAPTCHA, but with much higher human cost than the traditional kind.
+              </p>
+            </dd>
+
+            <dt>Your program also makes mistakes. Doesn't that mean the CAPTCHA still works?</dt>
+            <dd>
+              <p>
+                No. Most mistakes come from ambiguity in the prompt itself—<strong>the CAPTCHA tends to produce images where atoms and bonds heavily overlap,</strong>
+                which humans can't reasonably solve. These patterned errors aren't a problem for machines. Also, while our model has room to improve, humans can
+                only keep trying and hope to draw an easier image, or give up.
+              </p>
+              <p>
+                As above, these errors mostly increase human cost, not machine cost. We care about effectiveness and harm at the mechanism level. Real security
+                research explores many directions, but no one in the field would claim that <i>exam questions</i> are the answer.
+              </p>
+            </dd>
+
+            <dt>If it's so limited, why do people keep using it?</dt>
+            <dd>
+              <p>
+                Because many believe "it's safer," which isn't true. Spam bots haven't broken this CAPTCHA not because it's strong, but because there are
+                countless cheaper targets. Attackers prioritize return on investment rather than spending resources to bypass a niche knowledge quiz. This
+                creates the illusion that "attacks were blocked," while in reality human users are paying the extra time and effort with no real security gain.
+              </p>
+            </dd>
+
+            <dt>By publishing this, aren't you helping bots attack?</dt>
+            <dd>
+              <p>
+                No. In fact, most chiral-carbon CAPTCHAs enable asterisks that automatically mark where the correct answers are.
+                <strong> You don't even need a neural network. Under ten lines of OpenCV can reliably solve such CAPTCHAs </strong>
+                —it's no more secure than "single-digit arithmetic CAPTCHAs." Our model, by contrast, needs at least 1 GB of RAM and several seconds per
+                inference. That's acceptable for individuals but uneconomical for spam bots at scale. As for targeted attackers, no automated method can fully
+                stop them; if they invest time and compute, they'll get through.
+              </p>
+            </dd>
+
+            <dt>So what does it actually block?</dt>
+            <dd>
+              <p>
+                In reality, nothing meaningful. As above, cost-sensitive bots won't bother because there are easier targets; targeted attackers can invest to
+                bypass fixed-rule puzzles.
+              </p>
+              <p>
+                In other words, it lacks a threat model—the design never states who it's defending against; it simply puts an exam question at the door. The
+                result: ordinary people pay high time and cognitive costs without clear security benefits. A mechanism without a threat model is ineffective
+                from a security standpoint.
+              </p>
+            </dd>
+
+            <dt>Bots are getting more human-like; don't we need increasingly esoteric, domain-specific knowledge to stop them?</dt>
+            <dd>
+              <p>
+                If bots truly get more human-like, the only way forward is to design checks around behavior and context (based on group rules, topics, and risk
+                controls), not to raise knowledge thresholds—machines can call LLMs; people generally can't become top students on demand. Raising the
+                bar means bots still pass while humans struggle. It turns newcomers into cheaper collateral than spam bots.
+              </p>
+            </dd>
+
+            <dt>Some admins say "manual review + late DM approval" fixes it. Isn't that good enough?</dt>
+            <dd>
+              <p>
+                No. That merely shifts the extra cost to admins and doesn't address the unfairness of the mechanism itself. Allowing late approvals still means
+                users first experience being turned away, which deters many. This workaround admits the core truth: it's not bots being blocked; it's real users
+                who are disadvantaged in background, memory, or accessibility.
+              </p>
+            </dd>
+
+            <dt>Are you attacking the author or the admins who use it?</dt>
+            <dd>
+              <p>
+                Absolutely not. We're criticizing the mechanism, not people. The author may have built it out of curiosity or experimentation; admins may adopt
+                it simply because others do, without thinking through the consequences. That doesn't make them "bad."
+              </p>
+              <p>
+                Our point is: question and replace the practice, but direct the criticism at the rules, not at individuals. We're calling for rational
+                discussion and improvement, not attacks.
+              </p>
+            </dd>
+
+            <dt>Why criticize publicly instead of "just sending a PR" to improve it?</dt>
+            <dd>
+              <p>
+                Because this isn't a technical bug; it's a systemic issue. The chiral-carbon CAPTCHA is only one implementation; the real problem is "using a
+                specific education system's knowledge as a gate." Even if someone improves this bot, the underlying issue remains. Only by explaining the harm
+                in public can the community shift toward better options. Our critique isn't opposition to the author; it's advocacy for better design.
+              </p>
+            </dd>
+
+            <dt>Isn't technology neutral? Why blame this approach?</dt>
+            <dd>
+              <p>
+                Tools may be neutral, but their social outcomes aren't. When a question overlaps with a school curriculum, it obviously favors certain groups.
+                The result is systemic exclusion—smaller communities and higher barriers for under-represented people. That's not "neutral"; it's
+                discriminatory. Our critique isn't a denial of technology's value; it's a refusal to use it to
+                <a href="https://zh.wikipedia.org/zh-cn/Shadowsocks#:~:text=也会自发-,造墙,-%E3%80%82这尼玛" target="_blank" rel="noreferrer noopener"
+                  >造墙 (build walls)</a
+                >.
+              </p>
+            </dd>
+
+            <dt>If I'm an admin, what should I do now?</dt>
+            <dd>
+              <p>If you run a group, replace the chiral-carbon CAPTCHA starting now.</p>
+              <p>
+                It's simple: existing Telegram verification bots already offer buttons, Q&A, delays, and other common mechanisms. Some will argue these are
+                "easy to bypass," but as noted, the asterisked chiral-carbon CAPTCHA is equally cheap to bypass.
+                <strong>The purpose of CAPTCHAs is not to "perfectly stop bots," but to raise the cost of mass attacks.</strong> Given enough resources, any
+                verification can be bypassed. The key is to make bot-at-scale uneconomical without penalizing normal users. For that, a button click or
+                reCAPTCHA is already sufficient; the chiral-carbon variant adds human burden without extra security.
+              </p>
+              <p>If you truly face targeted attacks or want to go further, design a custom check tied to your group's announcement or topic.</p>
+            </dd>
+
+            <dt>If I'm a regular user, what should I do now?</dt>
+            <dd>
+              <p>
+                First, get past the wall: use our model to pass this kind of verification—it's affordable for individuals. After you're in, share this page with
+                admins and explain why they should switch to a more reasonable mechanism.
+              </p>
+              <p>If you agree with our stance, please share this project so more communities can notice the issue and start changing.</p>
+            </dd>
+
+            <dt>So who are you?</dt>
+            <dd>
+              <p>This project is led by catme0w—he's an orange cat.</p>
+              <p>Demo code by @AsterTheMedStu, a seeker of MSc, adrift too far in the silver-shadowed realm of thinking machines.</p>
+              <p>The copy on this page was written by me, @oceancat365 (no, I'm not a cat; I'm a dog), later revised by catme0w.</p>
+              <p>Thanks to everyone who contributed to the design and discussion. And thank you for reading. Come say hi!</p>
+            </dd>
+
+            <dt>(Easter egg) Where does this project's odd name come from?</dt>
+            <dd>
+              <p><a href="https://www.bilibili.com/video/av493519" target="_blank" rel="noreferrer noopener">（一阵强烈的电吉他）</a></p>
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div>Lost One's Chiral: Chapter 1 feat. MolScribe-Long, to be continued</div>
+        <div>(c) 2025 catme0w</div>
+      </div>
+    </footer>
+  </body>
+</html>

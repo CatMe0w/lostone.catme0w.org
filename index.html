@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Lost One 的手性碳：自动解决“手性碳验证码”</title>
+    <meta name="description" content="“手性碳验证码”的自动解答工具，同时是一件装置艺术作品，批评荒诞的筛选机制。" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="alternate" hreflang="zh" href="https://lostone.catme0w.org/index.html" />
+    <link rel="alternate" hreflang="en" href="https://lostone.catme0w.org/en.html" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        "name": "Lost One 的手性碳",
+        "about": "“手性碳验证码”的自动解答工具，同时是一件装置艺术作品，批评荒诞的筛选机制。",
+        "keywords": ["手性碳验证码", "MolScribe", "NeoAuthBot", "chiral carbon captcha"],
+        "inLanguage": "zh"
+      }
+    </script>
+    <style>
+      :root {
+        --max-w: 1200px;
+
+        --bg: #f5f6f8;
+        --text: #0e1116;
+        --muted: #5c6675;
+        --card: #ffffff;
+        --accent: #2b7fff;
+        --shadow: rgba(10, 15, 20, 0.08);
+        --outline: rgba(10, 15, 20, 0.08);
+
+        --radius-lg: 16px;
+        --radius-md: 12px;
+        --radius-sm: 4px;
+
+        --section-gap: clamp(24px, 4vw, 60px);
+        --container-pad: 16px;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0b0e12;
+          --text: #ecf0f3;
+          --muted: #a8b0bd;
+          --card: #11161c;
+          --accent: #7fb3ff;
+          --shadow: rgba(0, 0, 0, 0.08);
+          --outline: rgba(127, 127, 127, 0.1);
+        }
+      }
+
+      html,
+      body {
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        margin: 0;
+        font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+          "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+        line-height: 1.6;
+        text-rendering: optimizeLegibility;
+        text-autospace: normal;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .container {
+        max-width: var(--max-w);
+        margin-inline: auto;
+        padding-inline: var(--container-pad);
+      }
+
+      .hero {
+        min-height: 100svh;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        position: relative;
+      }
+      .hero img {
+        margin: 0 0 8px;
+        max-width: 280px;
+      }
+      .hero h1 {
+        margin: 0 0 8px;
+        font-size: clamp(28px, 6vw, 56px);
+        letter-spacing: 0.2px;
+      }
+      .hero .subtitle {
+        margin: 0 0 8px;
+        font-size: clamp(16px, 2.5vw, 22px);
+        color: var(--muted);
+      }
+      .lang-switch {
+        margin-top: 8px;
+        font-size: 14px;
+      }
+      .scroll-cue {
+        position: absolute;
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%);
+        font-size: 13px;
+        color: var(--muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        user-select: none;
+      }
+
+      .divider {
+        border: 0;
+        border-top: 2px solid var(--outline);
+        margin: 0;
+      }
+
+      .app-section {
+        padding-block: var(--section-gap);
+      }
+      .app-head {
+        text-align: center;
+        margin-bottom: 16px;
+      }
+      .app-title {
+        margin: 0;
+        font-size: clamp(20px, 4vw, 28px);
+        letter-spacing: 0.2px;
+      }
+      .app-subtitle {
+        margin-top: 6px;
+        font-size: 14px;
+      }
+      .app-shell {
+        border-radius: var(--radius-sm);
+        box-shadow: 0 0 0 0 var(--shadow), 0 10px 30px -14px var(--shadow);
+        background: var(--card);
+      }
+
+      gradio-app {
+        display: block;
+        width: 100%;
+        min-height: 300px;
+      }
+
+      .faq-section {
+        padding-block: var(--section-gap);
+      }
+      .faq-wrap {
+        max-width: 960px;
+        margin: 0 auto;
+        background: var(--card);
+        border-radius: var(--radius-lg);
+        padding: clamp(20px, 5vw, 28px);
+        box-shadow: 0 0 0 0 var(--shadow), 0 10px 30px -14px var(--shadow);
+      }
+      .faq-title {
+        margin: 0 0 16px;
+        font-size: clamp(18px, 3.5vw, 24px);
+      }
+      .faq dl {
+        margin: 0;
+      }
+      .faq dt {
+        font-weight: 600;
+        font-size: larger;
+        margin-top: 24px;
+      }
+      .faq dd {
+        margin: 6px 0 36px 0;
+        color: var(--text);
+      }
+
+      footer {
+        padding-block: 36px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      footer .container {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        align-items: center;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="container">
+        <img src="./data-original.png" alt="（这种验证码的一个示例，人类几乎无法通过）" />
+        <h1>Lost One 的手性碳</h1>
+        <p class="subtitle">自动解决「手性碳验证码」</p>
+        <div class="lang-switch">
+          <a href="./en.html">English version</a>
+        </div>
+      </div>
+      <div class="scroll-cue">
+        <span>向下滚动开始使用</span>
+      </div>
+    </header>
+
+    <hr class="divider" />
+
+    <section class="app-section" id="app">
+      <div class="container">
+        <div class="app-head">
+          <h2 class="app-title">开始使用</h2>
+          <div class="app-subtitle">
+            <a href="https://huggingface.co/spaces/catme0w/MolScribe-Long" target="_blank" rel="noopener">在新标签页打开</a>
+          </div>
+        </div>
+
+        <div class="app-shell">
+          <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/5.42.0/gradio.js"></script>
+          <gradio-app src="https://catme0w-molscribe-long.hf.space"></gradio-app>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-section" id="faq">
+      <div class="container">
+        <div class="faq-wrap faq">
+          <h2 class="faq-title">FAQ</h2>
+          <dl>
+            <dt>这个项目是什么？</dt>
+            <dd>
+              <p>
+                这是一个针对“手性碳验证码”的分析与回应项目。“手性碳验证码”是一些 Telegram
+                群的入群验证：给出一张分子结构图，要求新成员找出其中的手性碳（不对称碳）。手性碳原本是高中课本上的知识点，却被当作过滤机器人的验证手段。
+              </p>
+              <p>这既不公平，也不高效，因此我们开发了一个程序来证明这一点，帮助更多没有相关知识的人通过这个验证码，并提出更合理的替代方法。</p>
+            </dd>
+
+            <dt>为什么说它“不公平”？</dt>
+            <dd>
+              <p>因为它筛选的并不是“人类和机器人”，而是“掌握化学背景的人和其他人”。</p>
+              <p>
+                即使有化学基础的人，也要花上几分钟辨认。而对机器来说，题目来源单一、规律固定，完全是自动化的温床。最终受害的是跨学科新人、非理科背景的人，而不是广告机器人。换句话说，它是一种知识门槛，而不是有效的反机器人机制。
+              </p>
+              <p>
+                如果换成甲骨文、乐谱或冷僻方言，大多数人恐怕会立刻觉得这不公平。<strong>化学题之所以被接受，不过是它刚好迎合了某些人群的既有教育背景。</strong>
+              </p>
+            </dd>
+
+            <dt>可是手性碳验证不是提高了群的质量吗？</dt>
+            <dd>
+              <p>不是，这只是个错觉。它确实让群里留下了“更安静、更懂化学”的人，但代价是：那些本来能正常交流、只是没有化学背景的新人，被挡在了墙外。</p>
+              <p>换句话说，这并不是过滤掉机器人，而是过滤掉真实用户。氛围“变好”，只是因为留下的人更像彼此，形成了同温层。</p>
+              <p>如果一个机制的效果是把弱势群体、跨学科新人或无障碍条件不佳的人劝退，再来称之为“质量提升”，那这就不叫改进氛围，只是制造虚假的宁静。</p>
+            </dd>
+
+            <dt>为什么不干脆要求大家去学一学手性碳呢？</dt>
+            <dd>
+              <p>
+                因为入群验证不应该是考试。即便有人愿意现学，也要查资料、理解、再辨认，浪费数分钟来解决这样的无意义问题。验证不该设计成“临时补课”，学习应该是自发的探索，而不是强制的制度要求，否则兴趣就会变成负担——您应该对此深有体会。
+              </p>
+              <p>
+                更重要的是，不懂手性碳并不意味着无法做出贡献，把知识点和发言权绑定，本身就是错误的设计。如果真的想激发学习，可以把相关问题放在群里的兴趣任务或活动中。
+              </p>
+            </dd>
+
+            <dt>我觉得手性碳挺有趣的，这样的验证不是很好吗？</dt>
+            <dd>
+              <p>
+                兴趣值得鼓励，但它不该成为入群的门槛。喜欢化学没有问题，但把某个知识点当成入场券，就会把不相关背景的人拒之门外。上一条已经说过，当它变成强制条件时，学习的正面体验会被通关压力取代，反而劝退新人。
+              </p>
+              <p>入群验证的目标是防止滥用，而不是进行模拟考试。如果想保留这种趣味，可以把它变成可选活动，让更多人能享受其中的乐趣。</p>
+            </dd>
+
+            <dt>那至少它真的能挡住机器人吧？</dt>
+            <dd>
+              <p>在现实情况下，它的效果非常有限。</p>
+              <p>
+                这样的验证码题目来源集中，生成规则稳定，程序完全可以批量识别。渲染错误（见下文）和无障碍问题只会增加人类的成本，却不会显著增加机器破解的难度。更重要的是，目前没有通过率、平均耗时和误封率的数据对比，“挡住了”的印象很可能只是因为攻击者选择去打更便宜的目标，这并不代表这里安全。
+              </p>
+            </dd>
+
+            <dt>如果代码闭源，图像加噪点，是不是就安全了？</dt>
+            <dd>
+              <p>
+                不是。安全不应建立在“别人看不到细节”的前提上。用手性碳分子作为题目从根本上就不可能做到像红绿灯和消防栓那样复杂多样，甚至所有的手性碳题目组合可以被暴力穷举出来。为了提高“机器难度”而加入的混淆，往往首先抬升的是人类成本：图像更难辨认，平均通过时间更长。如果进一步增噪、扭曲版式，它就变成了传统图片验证码，而人类要付出的代价却要比传统验证码高得多。
+              </p>
+            </dd>
+
+            <dt>你们的程序也会出错，这不说明它还是有效的吗？</dt>
+            <dd>
+              <p>
+                不是。我们出现的错误，多源于题面本身的歧义——<strong>验证码倾向于产生大量原子与键相互重叠的图像，</strong>人类根本无法解答这种题目，但这种有规律的错误对机器而言不是问题。况且，我们的模型尚有大量改进的空间，但人类只能反复尝试，期盼抽出一个更简单的题目，或者直接放弃入群。
+              </p>
+              <p>
+                这和上一条类似，这些错误主要增加的是人的成本，而不是机器的成本。我们关注的是机制层面的有效性与伤害评估。真正能提升安全性的，业内的前沿各自有不同的研究方向，但不会有人认为高考题就是答案。
+              </p>
+            </dd>
+
+            <dt>既然它效果有限，那为什么还有人坚持使用？</dt>
+            <dd>
+              <p>
+                因为很多人认为“它确实更安全”，但事实并不是这样。广告机器人没有攻破手性碳验证码，并不是因为它强大，而是因为它们有成千上万更简单的目标可攻破。攻击者会优先选择性价比高的对象，而不是专门投入资源在极少数群绕过一道复杂的知识题，这就让群主产生了“它挡住了攻击”的幻觉。人类用户要为这种幻觉付出额外的时间与精力，而安全性并没有真正提升。
+              </p>
+            </dd>
+
+            <dt>你们公开这些内容，不是在帮助机器人实施攻击吗？</dt>
+            <dd>
+              <p>
+                不是。事实上，大多数手性碳验证码默认开启了星号提示，自动标出正确答案所在的位置。<strong
+                  >甚至不需要神经网络，十行以内的 OpenCV 代码就能准确识别这样的验证码</strong
+                >，它并不比“十以内的加减法验证码”更安全。而我们的模型需要至少 1 GB
+                内存，还要花费数秒才能推理完成。这样的成本对人类个体是可以接受的，但对批量运行的广告机器人来说不划算，他们总是宁愿选择更便宜的目标。至于定向攻击者，本身就不存在自动化手段能够彻底拦截，只要攻击者愿意投入时间与算力，他们总能找到方法。
+              </p>
+            </dd>
+
+            <dt>那它挡住了什么？</dt>
+            <dd>
+              <p>
+                事实上，它并没有真正挡住任何有意义的威胁。如上条所说，对成本敏感的广告机器人并不会专门来攻破它，因为他们总有更简单的目标；定向攻击者则完全可以投入足够的资源绕过这类固定规则的题目。
+              </p>
+              <p>
+                换句话说，它没有自己的“威胁模型”——它的设计没有说明它要防的到底是谁，只是单纯把一道高考题放在门口。结果就是，让普通人付出高额的时间和认知成本，却换不来明确的安全收益。一个没有威胁模型支撑的机制，在安全意义上是无效的。
+              </p>
+            </dd>
+
+            <dt>广告机器人现在越来越像真人，那不是只有越来越刁钻的领域特定知识才能拦住它们吗？</dt>
+            <dd>
+              <p>
+                如果机器人真的越来越像真人，那唯一的出路是把问题设计在行为与语境上（问题来自群规则、群话题，设计风控模型等），而不是抬高知识门槛，因为机器可以随时调用
+                LLM，而人类一般不能临时变成学科标兵。抬高门槛的结果是：机器依然能过，人类却更难过，本质上是在把新人变成比广告机器人还廉价的牺牲品。
+              </p>
+            </dd>
+
+            <dt>有些群主说“手动审核 + 过期私聊”已经补救了问题，这还不行吗？</dt>
+            <dd>
+              <p>
+                不行。这种补救本质上只是把额外的成本转嫁给群主，并没有解决机制本身的不公平。过期后再私聊通过，意味着用户仍然要先经历一次被挡在墙外的挫败感，而这种负面体验会劝退许多人。而且，这样的补救本身就承认了根本事实——真正被拦下的不是机器人，而是那些在学科背景、记忆力或无障碍方面处于不利地位的真实用户。
+              </p>
+            </dd>
+
+            <dt>你们是不是在攻击作者或者使用它的群主？</dt>
+            <dd>
+              <p>
+                绝对不是。我们的批评对象是机制本身，而不是具体的个人。我们理解作者可能是出于兴趣或尝试，才会编写这样的机器人；群主选择使用它，也可能只是因为看见别的群在用，而并没有深思其中的后果。这都不等于他们有错。
+              </p>
+              <p>我们强调的是：这种做法应该被质疑和替换，但针对的应该是规则，而不是人。我们呼吁理性地讨论和改进，而不是互相攻击。</p>
+            </dd>
+
+            <dt>不满就去改进它，去提 PR，为什么还要公开批评？</dt>
+            <dd>
+              <p>
+                因为这不是技术性问题，而是系统性问题。手性碳验证码只是其中一个实现，真正的问题在于“使用特定教育体系的知识充当门槛”这样的设计本身。即使有人给它提交了改进，这个问题依旧存在。只有公开地论证，让更多人理解其中的伤害，整个社区才可能转向更合理的方案。我们提出批评，不是要和作者对立，而是推动行业和大众认知的改进。
+              </p>
+            </dd>
+
+            <!-- <dt>（隐藏条目）你在否定规则的必要性，不为除了你自己以外的组织和机构负责，你把桌子掀了，然后呢？（原文如此）</dt>
+            <dd>
+              <p>当一个人只能用“自由主义”来指责别人，而不能解释验证码为何合理，那说明他已经放弃了论证，转向了人身攻击。</p>
+              <p>我不是在挑战规则，而是在捍卫更根本的规则：验证码的存在是为了保护人，而不是刁难人。</p>
+              <p>你们维护的不是规则，而是特权。</p>
+            </dd> -->
+
+            <dt>不是说技术是中立的吗？为什么要指责这种做法？</dt>
+            <dd>
+              <p>
+                技术手段本身当然是工具，但它产生的社会后果不可能“中立”。当一道题刚好和高考体系里的知识重合，它显然会偏向某些人群。这种结果就是系统性排斥——它缩小了社区规模，让弱势群体更难进入。这些都很明显不是所谓的”中立”，而是歧视。我们的质疑并不是否认技术本身的价值，而是拒绝用它来
+                <a href="https://zh.wikipedia.org/zh-cn/Shadowsocks#:~:text=也会自发-,造墙,-%E3%80%82这尼玛" target="_blank" rel="noreferrer noopener">造墙</a
+                >。
+              </p>
+            </dd>
+
+            <!-- <dt>（隐藏条目）手性碳要筛掉的就是你这种人吧？（原文如此）</dt>
+            <dd>
+              <p>如果你承认它的作用就是“筛掉某类人”，那等于承认它的目的从来不是安全。</p>
+              <p>以歧视为荣的你们，才更应该感到羞耻。</p>
+            </dd>
+            编者注：做题做的，出社会被筛掉就老实了 -->
+
+            <dt>作为群主，我现在应该做什么？</dt>
+            <dd>
+              <p>如果你是群主，可以从现在开始替换掉手性碳验证码。</p>
+              <p>
+                替代方案很简单：其他现成的 Telegram 验证 bot
+                已经提供了按钮、问答、延时等常见机制。有人会质疑这些方案“容易被绕过”，但如前文所说，带星号的手性碳同样能被极低成本绕过。<strong>验证码的作用从来不是“完美阻止机器人”，而是提高批量攻击的成本。</strong>任何验证只要攻击者愿意投入资源，最终都能被绕过。验证设计的关键在于：让机器人规模化变得不划算，同时不额外惩罚正常用户。在这方面，点击按钮或
+                reCAPTCHA 等已经足够；手性碳并没有带来额外的安全性，却人为增加了人类用户的负担。
+              </p>
+              <p>如果想进一步提高安全性，或者确实遇到了定向攻击，可以考虑自行设计独特的机制，例如前文提到的基于群公告或群聊主题的定制问答。</p>
+            </dd>
+
+            <dt>作为普通用户，我现在应该做什么？</dt>
+            <dd>
+              <p>
+                如果你是普通用户，先越过这墙：你可以直接使用我们在这里发布的模型来通过这类验证——它对单个用户的开销是可接受的。通过之后，把我们在这里说的转给管理员，解释为什么应该迁移到更合适的机制。
+              </p>
+              <p>如果你认同我们的立场，请把这个项目分享给更多人，让更多社群意识到问题并开始改变。</p>
+            </dd>
+
+            <dt>最后，你们到底是谁？</dt>
+            <dd>
+              <p>这个项目是由 catme0w 主导的，他是一只黄色的橘猫。</p>
+              <p>Demo code by @AsterTheMedStu, a seeker of MSc, adrift too far in the silver-shadowed realm of thinking machines.</p>
+              <p>这个页面的文案是由我，@oceancat365 编写的（不，我不是猫，是只狗）；后续由 catme0w 修订。</p>
+              <p>感谢所有参与了这个项目的设计和讨论的朋友们。也谢谢你读到这里，欢迎来交个朋友！</p>
+            </dd>
+
+            <dt>（彩蛋）这个项目奇怪的名字是怎么来的？</dt>
+            <dd>
+              <p><a href="https://www.bilibili.com/video/av493519" target="_blank" rel="noreferrer noopener">（一阵强烈的电吉他）</a></p>
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div>Lost One's Chiral: Chapter 1 feat. MolScribe-Long, to be continued</div>
+        <div>(c) 2025 catme0w</div>
+      </div>
+    </footer>
+  </body>
+</html>
