@@ -4,6 +4,8 @@ Live: [https://lostone.catme0w.org](https://lostone.catme0w.org)
 
 ## Model: MolScribe-Long
 
+Base Model: [MolScribe](https://pubs.acs.org/doi/10.1021/acs.jcim.2c01480)
+
 Hugging Face Space: https://huggingface.co/spaces/catme0w/MolScribe-Long
 
 Model Download: https://huggingface.co/catme0w/MolScribe-Long
