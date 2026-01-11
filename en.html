@@ -3,14 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Lost One's Chiral: Automatically solve the "chiral carbon CAPTCHA"</title>
+    <title>Lost One's Chiral: Dismantling the Chiral Carbon CAPTCHA</title>
     <meta
       name="description"
-      content='An automatic solver for the "chiral carbon CAPTCHA" and a piece of conceptual art critiquing absurd gatekeeping mechanisms.'
+      content="A research proof of concept analyzing the so-called 'chiral carbon CAPTCHA'. This project demonstrates its security limitations and provides a prototype to help real users overcome unnecessary knowledge barriers."
     />
     <meta name="color-scheme" content="light dark" />
-    <link rel="alternate" hreflang="zh" href="https://lostone.catme0w.org/index.html" />
-    <link rel="alternate" hreflang="en" href="https://lostone.catme0w.org/en.html" />
+    <link rel="canonical" href="https://lostone.catme0w.org/en" />
+    <link rel="alternate" hreflang="zh" href="https://lostone.catme0w.org/" />
+    <link rel="alternate" hreflang="en" href="https://lostone.catme0w.org/en" />
     <meta property="og:image" content="https://lostone.catme0w.org/cover-site.png" />
     <style>
       :root {
@@ -28,8 +29,15 @@
         --radius-md: 12px;
         --radius-sm: 4px;
 
-        --section-gap: clamp(24px, 4vw, 60px);
+        --section-gap: 16px;
         --container-pad: 16px;
+        --hero-pad: clamp(40px, 6vh, 80px);
+      }
+
+      @media (max-width: 768px) {
+        :root {
+          --section-gap: 8px;
+        }
       }
 
       @media (prefers-color-scheme: dark) {
@@ -76,15 +84,18 @@
       }
 
       .hero {
-        min-height: 100svh;
+        padding-top: var(--hero-pad);
+        padding-bottom: calc(var(--hero-pad) - 16px);
         display: grid;
         place-items: center;
         text-align: center;
         position: relative;
       }
       .hero img {
-        margin: 0 0 8px;
-        max-width: min(450px, 100%);
+        margin: calc(var(--hero-pad) - 24px) 0 0;
+        max-height: 350px;
+        width: auto;
+        max-width: 100%;
       }
       .hero h1 {
         margin: 0 0 8px;
@@ -98,71 +109,57 @@
         color: var(--muted);
       }
       .lang-switch {
-        margin-top: 8px;
+        margin-block: 16px;
         font-size: 14px;
       }
-      .scroll-cue {
-        position: absolute;
-        left: 50%;
-        bottom: 24px;
-        transform: translateX(-50%);
-        font-size: 13px;
-        color: var(--muted);
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        user-select: none;
-      }
 
-      .divider {
-        border: 0;
-        border-top: 2px solid var(--outline);
-        margin: 0;
-      }
-
-      .app-section {
+      .section {
         padding-block: var(--section-gap);
       }
-      .app-head {
-        text-align: center;
-        margin-bottom: 16px;
-      }
-      .app-title {
-        margin: 0;
-        font-size: clamp(20px, 4vw, 28px);
+      .section-title {
+        margin: 0 0 16px;
+        font-size: clamp(20px, 4vw, 24px);
         letter-spacing: 0.2px;
+        text-align: center;
       }
-      .app-subtitle {
-        margin-top: 6px;
-        font-size: 14px;
+      
+      .summary-content {
+        font-size: 1.05em;
+        line-height: 1.7;
       }
-      .app-shell {
-        border-radius: var(--radius-sm);
-        box-shadow: 0 0 0 0 var(--shadow), 0 10px 30px -14px var(--shadow);
-        background: var(--card);
-      }
-
-      gradio-app {
-        display: block;
-        width: 100%;
-        min-height: 300px;
-      }
-
-      .faq-section {
-        padding-block: var(--section-gap);
-      }
-      .faq-wrap {
+      
+      .card {
         max-width: 960px;
         margin: 0 auto;
-        background: var(--card);
         border-radius: var(--radius-lg);
-        padding: clamp(20px, 5vw, 28px);
         box-shadow: 0 0 0 0 var(--shadow), 0 10px 30px -14px var(--shadow);
+        background: var(--card);
+        padding: clamp(20px, 5vw, 28px);
       }
-      .faq-title {
-        margin: 0 0 16px;
-        font-size: clamp(18px, 3.5vw, 24px);
+
+      .app-link {
+        display: block;
+        transition: transform 0.2s, opacity 0.2s;
       }
+      .app-link:hover {
+        opacity: 0.95;
+      }
+      .app-card-inner {
+        padding: 8px 8px;
+        text-align: center;
+        background: transparent;
+        color: var(--text);
+      }
+      .app-card-inner .status-badge {
+        margin-bottom: 20px;
+      }
+      .app-card-inner p {
+        margin: 0 0 16px 0;
+        font-size: 16px;
+        color: var(--text);
+        line-height: 1.6;
+      }
+
       .faq dl {
         margin: 0;
       }
@@ -177,7 +174,8 @@
       }
 
       footer {
-        padding-block: 36px;
+        padding-top: calc(36px - var(--section-gap));
+        padding-bottom: 36px;
         color: var(--muted);
         font-size: 12px;
       }
@@ -188,59 +186,104 @@
         align-items: center;
         text-align: center;
       }
+
+      .primary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 32px;
+        background: var(--accent);
+        color: white;
+        border-radius: var(--radius-md);
+        font-weight: 500;
+        font-size: 16px;
+        transition: opacity 0.2s, transform 0.1s;
+      }
+      .primary-button:hover {
+        opacity: 0.8;
+        text-decoration: none;
+      }
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 16px;
+        background: var(--bg);
+        border: 1px solid var(--outline);
+        border-radius: 999px;
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--muted);
+        margin-bottom: 20px;
+      }
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #22c55e;
+        border-radius: 50%;
+        box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+      }
     </style>
   </head>
   <body>
     <header class="hero">
       <div class="container">
-        <img src="./cover-site.png" alt="(An example of this CAPTCHA type; often impossible for humans to solve.)" fetchpriority="high" />
         <h1>Lost One's Chiral</h1>
-        <h2 class="subtitle">Automatically solves "chiral carbon CAPTCHA"</h2>
+        <h2 class="subtitle">
+          <span style="display: block; margin-bottom: 8px; color: var(--text);">Reject false security, reject meaningless obedience tests.</span>
+          <span style="display: block; font-size: 0.9em; color: var(--muted);">We built an automated recognition prototype to help users from unrelated backgrounds cross this knowledge barrier.</span>
+        </h2>
         <div class="lang-switch">
           <a href="./index.html">中文版本</a>
         </div>
-      </div>
-      <div class="scroll-cue">
-        <span>Scroll down to start</span>
+        <img src="./cover-site.png" alt="(An example of this CAPTCHA type; often impossible for humans to solve.)" fetchpriority="high" />
       </div>
     </header>
 
-    <hr class="divider" />
-
-    <section class="app-section" id="app">
+    <section class="section" id="summary">
       <div class="container">
-        <div class="app-head">
-          <h2 class="app-title">Get started</h2>
-          <div class="app-subtitle">
-            <a href="https://catme0w-molscribe-long.hf.space" target="_blank" rel="noopener">Open in a new tab</a>
+        <div class="card">
+          <h2 class="section-title" style="margin-top: 0;">Executive Summary</h2>
+          <div class="summary-content">
+            <p>
+              The "chiral carbon CAPTCHA" is an abused Telegram entry barrier that requires users to identify chiral carbons (asymmetric carbons) in complex molecular diagrams. This knowledge point, originally belonging to high school chemistry textbooks, has now been alienated into an obedience test targeting ordinary users.
+            </p>
+            <p>
+              Mandating such knowledge in non-academic chat groups is neither fair nor efficient. It manufactures a false sense of superiority, shutting out a vast number of real users without a high school chemistry background, <strong>yet it cannot stop automated scripts</strong>.
+            </p>
+            <p>
+              We reject this meaningless knowledge barrier. This project provides an automated recognition prototype aimed at demonstrating the complete failure of this mechanism's security, helping users cross this unreasonable wall.
+            </p>
+            <p><strong>Read more:</strong> <a href="https://catme0w.org/en/behindthescene/lostone/" target="_blank" rel="noopener">Behind the scenes of the project</a></p>
           </div>
-        </div>
-
-        <div class="app-shell">
-          <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/5.49.0/gradio.js"></script>
-          <gradio-app src="https://catme0w-molscribe-long.hf.space"></gradio-app>
         </div>
       </div>
     </section>
 
-    <section class="faq-section" id="faq">
+    <section class="section" id="app">
       <div class="container">
-        <div class="faq-wrap faq">
-          <h2 class="faq-title">FAQ</h2>
-          <dl>
-            <dt>What is this project?</dt>
-            <dd>
-              <p>
-                This project analyzes and responds to the "chiral carbon CAPTCHA" used by some Telegram groups as a join verification: newcomers are shown a
-                molecular diagram and asked to identify the chiral (asymmetric) carbons.
-              </p>
-              <p>
-                We believe this mechanism is unfair and inefficient, so we've built this demo to show how it can be automated, to help those without chemistry
-                training pass, and to suggest better alternatives.
-              </p>
-              <p><strong>Read more:</strong> <a href="https://catme0w.org/en/behindthescene/lostone/" target="_blank" rel="noopener">Behind the scenes of the project</a></p>
-            </dd>
+        <div class="card">
+          <div class="app-shell app-card-inner">
+            <div class="status-badge">
+              <span class="status-dot"></span>
+              <span>CatMe0w/MolScribe-Long</span>
+            </div>
+            <p>
+              Upload a screenshot, and the model will immediately return the chiral carbon coordinates.
+            </p>
+            <a href="https://catme0w-molscribe-long.hf.space" target="_blank" class="primary-button">
+              Open in a new tab
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
 
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="card faq">
+          <h2 class="section-title">FAQ</h2>
+          <dl>
             <dt>Why is it "unfair"?</dt>
             <dd>
               <p>Because it doesn't reliably separate humans from bots; it separates people with a chemistry background from everyone else.</p>
@@ -418,7 +461,7 @@
                 The result is systemic exclusion—smaller communities and higher barriers for under-represented people. That's not "neutral"; it's
                 discriminatory. Our critique isn't a denial of technology's value; it's a refusal to use it to
                 <a href="https://zh.wikipedia.org/w/index.php?title=Shadowsocks&variant=zh-cn&oldid=89671728#:~:text=%E4%B9%9F%E4%BC%9A%E8%87%AA%E5%8F%91-,%E9%80%A0%E5%A2%99,-%E3%80%82%E8%BF%99%E5%B0%BC%E7%8E%9B" target="_blank" rel="noopener"
-                  >造墙 (build walls)</a
+                  >build walls</a
                 >.
               </p>
             </dd>
